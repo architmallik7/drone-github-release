@@ -122,7 +122,7 @@ func (p *Plugin) Validate() error {
 	return nil
 }
 
-// Execute provides the implementation of the plugin.
+// / Execute provides the implementation of the plugin.
 func (p *Plugin) Execute() error {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: p.settings.APIKey})
 	tc := oauth2.NewClient(
@@ -138,8 +138,8 @@ func (p *Plugin) Execute() error {
 	rc := releaseClient{
 		Client:               client,
 		Context:              p.network.Context,
-		Owner:                p.pipeline.Repo.Owner,
-		Repo:                 p.pipeline.Repo.Name,
+		Owner:                p.owner, // Use the Plugin's owner
+		Repo:                 p.repo,  // Use the Plugin's repo
 		Tag:                  strings.TrimPrefix(p.pipeline.Commit.Ref, "refs/tags/"),
 		Draft:                p.settings.Draft,
 		Prerelease:           p.settings.Prerelease,
@@ -151,7 +151,6 @@ func (p *Plugin) Execute() error {
 	}
 
 	release, err := rc.buildRelease()
-
 	if err != nil {
 		return fmt.Errorf("failed to create the release: %w", err)
 	}

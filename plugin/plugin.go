@@ -6,6 +6,8 @@
 package plugin
 
 import (
+	"os"
+
 	"github.com/drone-plugins/drone-plugin-lib/drone"
 )
 
@@ -14,13 +16,21 @@ type Plugin struct {
 	settings Settings
 	pipeline drone.Pipeline
 	network  drone.Network
+	owner    string
+	repo     string
 }
 
 // New initializes a plugin from the given Settings, Pipeline, and Network.
 func New(settings Settings, pipeline drone.Pipeline, network drone.Network) drone.Plugin {
+	// Retrieve owner and repo from environment variables
+	owner := os.Getenv("DRONE_REPO_NAMESPACE")
+	repo := os.Getenv("DRONE_REPO_NAME")
+
 	return &Plugin{
 		settings: settings,
 		pipeline: pipeline,
 		network:  network,
+		owner:    owner,
+		repo:     repo,
 	}
 }
